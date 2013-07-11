@@ -112,7 +112,18 @@ angular.module('$strap.directives')
         if(controller) {
           element.on('changeDate', function(ev) {
             scope.$apply(function () {
-              controller.$setViewValue(type === 'string' ? element.val() : ev.date);
+				if (type === 'string')
+					controller.$setViewValue(element.val());
+				else {
+					if (angular.isDate(controller.$modelValue)) { // is there a date in the model, if so put it's time parts back in the value...
+						var currentDate = controller.$modelValue;
+						
+						ev.date.setHours (currentDate.getHours());
+						ev.date.setMinutes (currentDate.getMinutes());
+						ev.date.setSeconds (currentDate.getSeconds());
+					}
+					controller.$setViewValue(ev.date);
+				}
             });
           });
         }
